@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Troubleshooting Komputer</title>
+    <script>
+        async function checkGoal() {
+            const goal = document.getElementById("goal").value;
+            const response = await fetch("/diagnosis", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ goal: goal })
+            });
+            const result = await response.json();
+            document.getElementById("result").innerText = 
+                result.result ? `Masalah "${goal}" terdiagnosis.` : `Masalah "${goal}" tidak terdiagnosis.`;
+        }
+    </script>
+</head>
+<body>
+    <h1>Troubleshooting Komputer</h1>
+    <label for="goal">Masukkan masalah:</label>
+    <input type="text" id="goal" placeholder="Contoh: PSU Rusak">
+    <button onclick="checkGoal()">Diagnosa</button>
+    <p id="result"></p>
+</body>
+</html>
