@@ -2,19 +2,56 @@
 <html>
 <head>
     <title>Troubleshooting Komputer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input, button {
+            margin: 5px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+        p {
+            font-size: 18px;
+            color: blue;
+        }
+        .error {
+            color: red;
+        }
+    </style>
     <script>
         async function checkGoal() {
-            const goal = document.getElementById("goal").value;
-            const response = await fetch("/diagnosis", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ goal: goal })
-            });
-            const result = await response.json();
-            document.getElementById("result").innerText = 
-                result.result ? `Masalah "${goal}" terdiagnosis.` : `Masalah "${goal}" tidak terdiagnosis.`;
+            const goal = document.getElementById("goal").value.trim();
+            
+            if (!goal) {
+                document.getElementById("result").innerText = "Silakan masukkan masalah terlebih dahulu.";
+                document.getElementById("result").className = "error";
+                return;
+            }
+
+            try {
+                const response = await fetch("https://backward.netlify.app//diagnosis", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ goal: goal })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                document.getElementById("result").innerText = 
+                    result.result ? `Masalah "${goal}" terdiagnosis.` : `Masalah "${goal}" tidak terdiagnosis.`;
+                document.getElementById("result").className = ""; // Reset style
+            } catch (error) {
+                document.getElementById("result").innerText = 
+                    `Terjadi kesalahan: ${error.message}`;
+                document.getElementById("result").className = "error";
+            }
         }
     </script>
 </head>
